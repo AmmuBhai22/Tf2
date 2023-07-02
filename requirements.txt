@@ -1,9 +1,6 @@
 Flask==2.2.2
 Gunicorn
 requests==2.31.0
-hmac
-json
 time
-hashlib
 base64
 uuid
