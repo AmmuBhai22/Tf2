@@ -16,7 +16,7 @@ headers = {
 
 def credit():
 
-    return "(Toffee-API) Made With ❤️ By Sabbir Hasan<br>For More Visit (https://github.com/sabbiriptv)"
+    return "(Toffee-API)"
 
 @app.route("/auto/<string:channel_id>.m3u8")
 
