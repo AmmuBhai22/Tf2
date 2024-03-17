@@ -1,7 +1,7 @@
 from flask import Flask, make_response,request
-#import requests,time,hashlib,hmac,json
+import requests,time,hashlib,hmac,json
 #from uuid import uuid4
-import pycurl
+#import pycurl
 #import base64 as base
 app = Flask(__name__)
 def reqcurl(username, password, host, port, target_url='http://api.ipify.org/'):
@@ -43,7 +43,7 @@ def reqcurl(username, password, host, port, target_url='http://api.ipify.org/'):
 
 @app.route("/")
 def index():
-  response = reqcurl("", "", "117.251.103.186", "8080").decode()
-  return response
+  #response = reqcurl("", "", "117.251.103.186", "8080").decode()
+  return "Hi here"
 
 #app.run("0.0.0.0",port=81)
