@@ -1,75 +1,50 @@
-# Install the Transformers library
-#pip install transformers
-
-# Import necessary libraries
 import torch
-from transformers import GPT2Tokenizer, GPT2LMHeadModel
-from torch.utils.data import Dataset, DataLoader
+from torch.utils.data import Dataset
 
-# Define your dataset class
-class MyDataset(Dataset):
-    def __init__(self, data):
-        self.data = data
-    
+class WordMeaningDataset(Dataset):
+    def __init__(self, words, meanings):
+        self.words = words
+        self.meanings = meanings
+        
     def __len__(self):
-        return len(self.data)
+        return len(self.words)
     
     def __getitem__(self, idx):
-        return self.data[idx]
+        word = self.words[idx]
+        meaning = self.meanings[idx]
+        
+        # Convert word and meaning to tensors (you can customize this part)
+        word_tensor = torch.tensor(word)
+        meaning_tensor = torch.tensor(meaning)
+        
+        return word_tensor, meaning_tensor
 
-# Example dataset (replace this with your own data loading logic)
-data = ["Example input sequence 1", "Example input sequence 2", ...]
+# Sample data
+words = ["Telephone", "Algebra"]
+meanings = ["a system for transmitting voices over a distance using wire or radio", 
+            "a branch of mathematics in which letters and symbols are used to represent quantities and quantities are manipulated according to the rules of operations"]
 
-# Initialize tokenizer and model
-tokenizer = GPT2Tokenizer.from_pretrained("gpt2")
-model = GPT2LMHeadModel.from_pretrained("gpt2")
+# Create dataset
+word_meaning_dataset = WordMeaningDataset(words, meanings)
 
-# Tokenize the dataset
-tokenized_data = tokenizer(data, padding=True, truncation=True, return_tensors="pt")
+# Example usage:
+for i in range(len(word_meaning_dataset)):
+    word, meaning = word_meaning_dataset[i]
+    #print(f"Word: {word}, Meaning: {meaning}")
 
-# Wrap tokenized data into a PyTorch Dataset
-dataset = MyDataset(tokenized_data)
-
-# Define training parameters
-batch_size = 4
-num_epochs = 3
-learning_rate = 1e-4
-
-# Create DataLoader
-dataloader = DataLoader(dataset, batch_size=batch_size, shuffle=True)
-
-# Set device
-device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-
-# Move model to device
-model.to(device)
-
-# Define optimizer and loss function
-optimizer = torch.optim.AdamW(model.parameters(), lr=learning_rate)
-criterion = torch.nn.CrossEntropyLoss()
-
-# Training loop
-for epoch in range(num_epochs):
-    model.train()
-    total_loss = 0
+while True:
+    word = input("Enter prompt:\n")
     
-    for batch in dataloader:
-        input_ids = batch["input_ids"].to(device)
-        attention_mask = batch["attention_mask"].to(device)
-        
-        # Forward pass
-        outputs = model(input_ids, attention_mask=attention_mask, labels=input_ids)
-        loss = outputs.loss
-        
-        # Backward pass
-        optimizer.zero_grad()
-        loss.backward()
-        optimizer.step()
-        
-        total_loss += loss.item()
+    # Define meanings for the words
+    word_meanings = {
+        "Telephone": "a system for transmitting voices over a distance using wire or radio",
+        "Algebra": "a branch of mathematics in which letters and symbols are used to represent quantities and quantities are manipulated according to the rules of operations"
+        # Add more words and their meanings as needed
+    }
     
-    average_loss = total_loss / len(dataloader)
-    print(f"Epoch {epoch+1}/{num_epochs}, Loss: {average_loss:.4f}")
-
-# Save the trained model (optional)
-model.save_pretrained("custom_model")
+    # Check if the word exists in the dictionary
+    if word in word_meanings:
+        print(f"Meaning of '{word}': {word_meanings[word]}")
+    else:
+        print(f"No meaning found for '{word}'")
+  
